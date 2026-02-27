@@ -1,26 +1,207 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+/* =========================
+   BumpLogic Futuristic Styles
+   ========================= */
+
+/* Glass panel used in WarRoom */
+.panel-fab {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  box-shadow: 0 25px 90px rgba(0, 0, 0, 0.55);
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+/* Wafer grid overlay (subtle) */
+.bg-wafer-grid {
+  background-image:
+    linear-gradient(to right, rgba(255,255,255,0.06) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255,255,255,0.06) 1px, transparent 1px);
+  background-size: 60px 60px;
+  opacity: 0.28;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/* Wafer rings overlay (concentric circles) */
+.bg-wafer-rings {
+  background-image:
+    radial-gradient(circle at 50% 35%, rgba(34,197,94,0.10) 0 2px, transparent 2px),
+    radial-gradient(circle at 50% 35%, rgba(34,197,94,0.08) 0 140px, transparent 140px),
+    radial-gradient(circle at 50% 35%, rgba(56,189,248,0.06) 0 260px, transparent 260px),
+    radial-gradient(circle at 50% 35%, rgba(34,197,94,0.05) 0 380px, transparent 380px),
+    radial-gradient(circle at 50% 35%, rgba(56,189,248,0.04) 0 520px, transparent 520px);
+  opacity: 0.9;
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+/* Subtle noise texture */
+.bg-noise {
+  background-image:
+    repeating-radial-gradient(circle at 20% 10%, rgba(255,255,255,0.04) 0 1px, transparent 1px 5px),
+    repeating-radial-gradient(circle at 80% 60%, rgba(255,255,255,0.03) 0 1px, transparent 1px 6px);
+  opacity: 0.15;
+  mix-blend-mode: overlay;
+}
+
+/* Cinematic vignette */
+.bg-vignette {
+  background: radial-gradient(circle at 50% 40%, transparent 0%, rgba(0,0,0,0.35) 55%, rgba(0,0,0,0.75) 100%);
+  opacity: 1;
+}
+
+.scanlines::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    to bottom,
+    rgba(255,255,255,0.03),
+    rgba(255,255,255,0.03) 1px,
+    transparent 2px,
+    transparent 6px
+  );
+  opacity: 0.25;
+  mix-blend-mode: overlay;
+}
+
+/* Premium panel w/ gradient border + glow */
+.panel-pro {
+  position: relative;
+  border-radius: 18px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.10);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  box-shadow: 0 22px 80px rgba(0,0,0,0.45);
+  overflow: hidden;
+}
+
+.panel-pro::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  padding: 1px;
+  border-radius: 18px;
+  background: linear-gradient(135deg,
+    rgba(56,189,248,0.35),
+    rgba(34,197,94,0.18),
+    rgba(255,255,255,0.08)
+  );
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+  opacity: 0.9;
+}
+
+.panel-pro::after {
+  content: "";
+  position: absolute;
+  inset: -40% -30% auto -30%;
+  height: 140px;
+  background: radial-gradient(circle at 30% 20%, rgba(34,197,94,0.16), transparent 60%);
+  pointer-events: none;
+}
+
+/* Header strip */
+.panel-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 18px;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+  background: rgba(255,255,255,0.03);
+}
+
+.badge-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,0.12);
+  background: rgba(255,255,255,0.04);
+  font-size: 12px;
+  color: rgba(255,255,255,0.85);
+}
+
+/* Premium card */
+.panel-pro {
+  position: relative;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  box-shadow: 0 22px 80px rgba(0, 0, 0, 0.45);
+  overflow: hidden;
+}
+
+.panel-pro::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  padding: 1px;
+  border-radius: 18px;
+  background: linear-gradient(
+    135deg,
+    rgba(56, 189, 248, 0.35),
+    rgba(34, 197, 94, 0.18),
+    rgba(255, 255, 255, 0.08)
+  );
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+  opacity: 0.9;
+}
+
+.panel-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 18px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.badge-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.04);
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+/* Green “fab” glow text */
+.text-fab {
+  text-shadow: 0 0 18px rgba(34,197,94,0.20), 0 0 42px rgba(34,197,94,0.10);
+}
+
+/* Green gradient border chip */
+.chip-fab {
+  border: 1px solid rgba(34,197,94,0.30);
+  background: rgba(34,197,94,0.10);
+  color: rgba(220,252,231,0.95);
+  box-shadow: 0 10px 40px rgba(34,197,94,0.12);
+}
+
+/* Hero glow blob */
+.hero-glow {
+  position: absolute;
+  inset: -120px -120px auto -120px;
+  height: 320px;
+  background: radial-gradient(circle at 35% 35%,
+    rgba(34,197,94,0.25),
+    rgba(34,197,94,0.10) 35%,
+    transparent 70%
+  );
+  filter: blur(8px);
+  pointer-events: none;
 }
