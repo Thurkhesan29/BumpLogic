@@ -417,14 +417,17 @@ function formatOutput(
     }`,
   ];
 
-  const causes = top3.map((x, i) => `${i + 1}) ${CAUSE_LIBRARY[x.id].title} — ${x.pct.toFixed(0)}%`).join("\n");
+  const causes = top3
+    .map((x, i) => `${i + 1}) ${CAUSE_LIBRARY[x.id].title} — ${x.pct.toFixed(0)}%`)
+    .join("\n");
+
   const moves = buildFirstMoves(input, top3).map((m) => `- ${m}`).join("\n");
 
-  const matrix = buildConfirmationMatrix(top3);
-  const table =
-    `Test | Signal | Means | Next action\n` +
-    `---|---|---|---\n` +
-    matrix.map((r) => `${r.test} | ${r.signal} | ${r.means} | ${r.next}`).join("\n");
+  // ✅ IMPORTANT: remove markdown-table formatting from text output
+  // (Matrix will be rendered as UI cards instead)
+  const matrixText = buildConfirmationMatrix(top3)
+    .map((r, i) => `${i + 1}) Test: ${r.test}\n   Signal: ${r.signal}\n   Means: ${r.means}\n   Next: ${r.next}`)
+    .join("\n\n");
 
   const gateLines = reqGate
     .map((k) => {
@@ -452,8 +455,8 @@ function formatOutput(
     causes +
     `\n\n3) First 4 Moves (next 8 hours)\n` +
     moves +
-    `\n\n4) Confirmation Matrix (Test | Signal | Means | Next)\n` +
-    table +
+    `\n\n4) Confirmation Matrix (Rendered as UI cards)\n` +
+    matrixText +
     `\n\n5) Release Gate Checklist (required items)\n` +
     gateLines
   );
@@ -504,6 +507,36 @@ function labelGate(k: GateKey) {
     case "BRIDGING_RISK_CLEARED":
       return "Bridging risk cleared";
   }
+}
+
+/** ✅ NEW: Pretty futuristic matrix UI */
+function MatrixGrid({ rows }: { rows: TestCard[] }) {
+  return (
+    <div className="mb-4 rounded-xl border border-white/10 bg-black/35 p-4">
+      <div className="flex items-center justify-between mb-3">
+        <div className="text-xs text-white/60">Confirmation Matrix</div>
+        <div className="text-[11px] text-white/40">Rendered UI (not markdown)</div>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+        {rows.map((r, idx) => (
+          <div key={idx} className="rounded-xl border border-white/10 bg-white/5 p-4">
+            <div className="text-xs text-white/50 mb-1">Test</div>
+            <div className="text-sm text-white/85 font-medium">{r.test}</div>
+
+            <div className="mt-3 text-xs text-white/50 mb-1">Signal</div>
+            <div className="text-sm text-white/80">{r.signal}</div>
+
+            <div className="mt-3 text-xs text-white/50 mb-1">Means</div>
+            <div className="text-sm text-white/80">{r.means}</div>
+
+            <div className="mt-3 text-xs text-white/50 mb-1">Next</div>
+            <div className="text-sm text-white/80">{r.next}</div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
 }
 
 export default function WarRoom() {
@@ -575,6 +608,30 @@ export default function WarRoom() {
     evidence,
     bridgingRisk,
   });
+
+  // ✅ Matrix rows used for UI
+  const matrixRows = useMemo(() => {
+    if (!output) return [];
+    const inp = buildInput();
+    const scored = scoreCauses(inp);
+    return buildConfirmationMatrix(scored.top3);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [
+    output,
+    pkg,
+    processStep,
+    location,
+    morphology,
+    denseBias,
+    severity,
+    toolCorr,
+    timeBehavior,
+    acrossLot,
+    chemAge,
+    evidence,
+    bridgingRisk,
+    changes,
+  ]);
 
   const Toggle = ({
     value,
@@ -691,7 +748,7 @@ export default function WarRoom() {
     setIsThinking(true);
     setCopied(false);
 
-    const cleanGate = {
+    const cleanGate: Record<GateKey, boolean> = {
       AOI_MONITORS_PASS: false,
       SEM_EDS_DONE: false,
       CORRECTIVE_ACTION_DONE: false,
@@ -738,7 +795,6 @@ export default function WarRoom() {
     setTimeout(() => setCopied(false), 1200);
   };
 
-  // Auto-refresh after Analyze has been run
   useEffect(() => {
     if (!output) return;
     recompute();
@@ -1093,6 +1149,9 @@ export default function WarRoom() {
                     <div className="h-full w-full animate-pulse bg-gradient-to-r from-transparent via-white/10 to-transparent" />
                   </div>
                 )}
+
+                {/* ✅ NEW: pretty matrix UI */}
+                {matrixRows.length > 0 && <MatrixGrid rows={matrixRows} />}
 
                 <pre className="relative whitespace-pre-wrap text-[13px] leading-6 text-green-200/90 font-mono">
                   {output ||
